@@ -68,8 +68,6 @@ Inside the repo:
 
 ## 👨‍🔬 Created By
 
-**[Mallikarjun Reddy Bardipuram]**
+**Mallikarjun Reddy Bardipuram**
 
 ---
-
-If you want, I can also tighten the language further, add badges, or generate a proper week-folder structure template.
