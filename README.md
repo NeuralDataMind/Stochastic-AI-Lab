@@ -1,5 +1,3 @@
----
-
 # 🧪 Stochastic AI Lab
 
 *A weekly collection of math-heavy, scratch-built AI/ML implementations.*
