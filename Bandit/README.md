@@ -27,12 +27,11 @@ This project implements a **Bayesian Multi-Armed Bandit** where each price is an
 
 Each price has a Beta-distributed belief:
 
-[
-P(\theta) \sim \text{Beta}(\alpha, \beta)
-]
+$\alpha$ (Alpha): Count of Sales.
 
-* **α (alpha)** = number of sales
-* **β (beta)** = number of no-sales
+$\beta$ (Beta): Count of No-Sales.
+
+$$P(\theta) \sim \text{Beta}(\alpha, \beta)$$
 
 These evolve with every customer interaction.
 
@@ -46,12 +45,12 @@ This implementation maximizes **Expected Profit**:
 
 2. **Calculate** expected profit:
 
-[
-\text{EP} = p \times (\text{Price} - \text{Cost})
-]
 
-3. **Select** the price with highest ( \text{EP} ).
-4. **Update** α or β based on sale outcome.
+$$\text{Expected Profit} = p \times (\text{Price} - \text{Cost})$$
+
+3. **Select**: Choose the price with the highest expected profit for this customer.
+
+4. **Update**: Observe the outcome (Sale/No Sale) and update $\alpha$ or $\beta$.
 
 This allows dynamic pricing under uncertainty with Bayesian updating.
 
