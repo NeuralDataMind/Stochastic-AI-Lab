@@ -47,7 +47,7 @@ A structured lab-style collection of stochastic AI/ML implementations. Each week
 ## 🛠️ Setup & Usage
 
 ```bash
-git clone https://github.com/yourusername/Stochastic-AI-Lab.git
+git clone https://github.com/NeuralDataMind/Stochastic-AI-Lab.git
 cd Stochastic-AI-Lab
 ```
 
