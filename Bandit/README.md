@@ -1,93 +1,113 @@
-💰 Week 1: Bayesian Price Optimizer
+# 💰 Week 1 — Bayesian Price Optimizer
 
-Focus Area: Reinforcement Learning, Stochastic Processes, Dynamic Pricing
+**Focus Area:** Reinforcement Learning, Stochastic Processes, Dynamic Pricing
+**Algorithm:** Thompson Sampling (Profit-Maximizing Variant)
+**Status:** ✅ Completed
 
-Algorithm: Thompson Sampling with Profit Maximization
+---
 
-Status: ✅ Completed
+## 🧐 Problem Overview
 
-🧐 The Problem
+Pricing in a live market is a stochastic optimization problem:
 
-In a live market, finding the optimal price for a product is difficult:
+* **Unknown Demand Curve:** The customer’s willingness-to-pay is not known.
+* **Exploration Cost:** Overpricing kills conversions; underpricing kills revenue.
+* **A/B Testing Waste:** Classic A/B tests waste ~50% traffic on inferior prices.
 
-Unknown Demand: We don't know what customers are willing to pay (the "True Value").
+**Objective:**
+Develop an online-learning agent that discovers the profit-maximizing price **while selling**, minimizing cumulative *Regret*.
 
-Exploration Cost: Testing a high price might scare away customers, but testing a low price leaves money on the table.
+---
 
-A/B Testing Flaws: Standard A/B testing wastes 50% of traffic on "losing" prices for weeks.
+## 🧠 Solution: Profit-Aware Thompson Sampling
 
-The Goal: Build an AI agent that learns the optimal price while selling, minimizing "Regret" (lost revenue) by balancing exploration and exploitation.
+This project implements a **Bayesian Multi-Armed Bandit** where each price is an arm with an uncertain conversion probability.
 
-🧠 The Solution: Multi-Armed Bandit (Thompson Sampling)
+### Conversion Model
 
-Instead of a static model, I implemented a Bayesian Reinforcement Learning agent.
+Each price has a Beta-distributed belief:
 
-The Math
+[
+P(\theta) \sim \text{Beta}(\alpha, \beta)
+]
 
-The agent treats the conversion rate of every price as a Beta Distribution ($\alpha, \beta$) rather than a fixed number.
+* **α (alpha)** = number of sales
+* **β (beta)** = number of no-sales
 
-$\alpha$ (Alpha): Count of Sales.
+These evolve with every customer interaction.
 
-$\beta$ (Beta): Count of No-Sales.
+### Decision Logic (Profit Maximization)
 
-$$P(\theta) \sim \text{Beta}(\alpha, \beta)$$
+Standard Thompson Sampling maximizes conversion rate.
+This implementation maximizes **Expected Profit**:
 
-The Decision Logic (Profit-Aware)
+1. **Sample**:
+   Draw ( p \sim \text{Beta}(\alpha, \beta) ) for each price.
 
-Unlike standard implementations that maximize Conversion Rate, this agent maximizes Expected Profit.
+2. **Calculate** expected profit:
 
-Sample: Draw a random conversion probability $p$ from the Beta distribution for each price (Thompson Sampling).
+[
+\text{EP} = p \times (\text{Price} - \text{Cost})
+]
 
-Calculate: Multiply by the margin.
+3. **Select** the price with highest ( \text{EP} ).
+4. **Update** α or β based on sale outcome.
 
+This allows dynamic pricing under uncertainty with Bayesian updating.
 
-$$\text{Expected Profit} = p \times (\text{Price} - \text{Cost})$$
+---
 
-Select: Choose the price with the highest expected profit for this customer.
+## 📂 Files in This Project
 
-Update: Observe the outcome (Sale/No Sale) and update $\alpha$ or $\beta$.
+| File                     | Description                                                                                                                                   |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bandit_pricing.py`      | Core simulation. Runs the Thompson Sampling agent against a stochastic market (sigmoid demand curve) for ~2,000 iterations.                   |
+| `bandit_simulation.html` | Interactive visualization (React, single-file). Animates evolving Beta distributions. Includes an optional “AI Consultant” powered by Gemini. |
 
-📂 Files in this Project
+---
 
-File
+## 🚀 How to Run
 
-Description
+### 1. Python Simulation
 
-bandit_pricing.py
+Run the pricing bandit simulation:
 
-The Core Logic. A Python simulation running the agent against a stochastic market environment (Sigmoid Demand Curve) for 2,000 days.
-
-bandit_simulation.html
-
-The Visualizer. A single-file React application that animates the "Belief Distributions" evolving in real-time. Includes an "AI Consultant" powered by Gemini.
-
-🚀 How to Run
-
-1. Python Simulation
-
-Run the script to see the agent learn over 2,000 iterations.
-
+```bash
 python bandit_pricing.py
+```
 
+**Outputs:**
 
-Output: You will see a scatter plot of prices chosen over time (converging to the optimal) and the final Probability Density Functions (PDFs) of the agent's beliefs.
+* Price-selection scatter plot showing convergence.
+* Final Beta PDFs for each price, showing learned beliefs.
 
-2. Interactive Web Visualization
+---
 
-Simply open bandit_simulation.html in any modern web browser.
+### 2. Interactive Visualization
 
-Start: Click to watch the agent learn.
+Open:
 
-God Mode: Adjust "True Customer Value" in real-time to watch the agent react to market shocks.
+```
+bandit_simulation.html
+```
 
-AI Consultant: Click the "Analyze" button to get an LLM critique of the agent's current strategy.
+Features:
 
-📊 Results & Insights
+* Live animation of belief updates
+* “God Mode”: adjust true customer value to simulate market shocks
+* “AI Consultant”: LLM critique of the current strategy
 
-Convergence: The agent typically identifies the optimal price (e.g., $40) within ~100-200 iterations.
+---
 
-Risk Aversion: The algorithm correctly avoids the highest price ($70) even if it has a high margin, because the probability of sale (sampled from the Beta distribution) is too low.
+## 📊 Key Results & Insights
 
-Recovery: When market conditions change (e.g., "True Value" drops), the agent briefly explores lower prices before stabilizing again.
+* **Fast Convergence:** Optimal price (e.g., $40) typically found within **100–200 steps**.
+* **Rational Risk Handling:** High-margin but low-probability prices (e.g., $70) are avoided because sampled profit is usually low.
+* **Shock Recovery:** When “true value” changes, the agent briefly explores then stabilizes again.
+* **Low Regret Curve:** Performance strongly outperforms any static pricing strategy.
 
-Part of the Stochastic AI Lab challenge.
+---
+
+*This project is part of the Stochastic AI Lab weekly challenge.*
+
+---
